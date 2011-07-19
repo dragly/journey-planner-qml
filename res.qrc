@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/SearchPage.qml</file>
+        <file>qml/constants.js</file>
+        <file>qml/ListDelegate.qml</file>
+        <file>qml/RealtimePage.qml</file>
+        <file>qml/TravelPage.qml</file>
+        <file>qml/PositionPage.qml</file>
+        <file>qml/SearchForm.qml</file>
+        <file>qml/SearchDelegate.qml</file>
+    </qresource>
+</RCC>
