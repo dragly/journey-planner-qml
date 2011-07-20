@@ -9,5 +9,8 @@
         <file>qml/PositionPage.qml</file>
         <file>qml/SearchForm.qml</file>
         <file>qml/SearchDelegate.qml</file>
+        <file>qml/travels.js</file>
+        <file>qml/TravelResultsPage.qml</file>
+        <file>qml/helpers.js</file>
     </qresource>
 </RCC>

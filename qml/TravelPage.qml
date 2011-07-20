@@ -1,13 +1,10 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
-import com.nokia.extras 1.1
+import com.nokia.extras 1.0
 import "constants.js" as UI
 
 Page {
     property real defaultMargin: UI.MARGIN_XLARGE
-
-    property string toStation: "3012036"
-    property string fromStation: "3010453"
 
     property bool isTo
 
@@ -16,6 +13,13 @@ Page {
     //    anchors.margins: UiConstants.DefaultMargin
     anchors.margins: defaultMargin
 
+    function updateDateTime() {
+        var d = new Date(datePickerDialog.year, datePickerDialog.month - 1, datePickerDialog.day, timePickerDialog.hour, timePickerDialog.minute)
+        console.log(d.getFullYear() + " " + d.getHours())
+        datePickerButton.text = Qt.formatDateTime(d, "ddd dd MMM yyyy");
+        timePickerButton.text = Qt.formatDateTime(d, "hh:mm");
+        travelResultsPage.time = Qt.formatDateTime(d, "ddMMyyyyhhmm");
+    }
     Component.onCompleted: {
         var d = new Date();
         datePickerDialog.year = d.getFullYear();
@@ -25,8 +29,13 @@ Page {
         timePickerDialog.hour = d.getHours();
         timePickerDialog.minute = d.getMinutes();
         timePickerButton.text = Qt.formatTime(d, "hh:mm");
+        updateDateTime()
     }
 
+
+    TravelResultsPage{
+        id: travelResultsPage
+    }
     Column {
         id: col
         width: parent.width
@@ -40,9 +49,11 @@ Page {
             width: parent.width
             onClicked: {
                 isTo = false
-                searchForm.searchField.text = ""
+                if(text != "Select")
+                    searchForm.searchField.text = text
+                else
+                    searchForm.searchField.text = ""
                 searchForm.searchModel.clear()
-                searchForm.searchField.focus = true
                 searchSheet.open()
             }
         }
@@ -53,14 +64,18 @@ Page {
             id: toButton
             text: "Select"
             width: parent.width
+            height: 50
             onClicked: {
                 isTo = true
-                searchForm.searchField.text = ""
+                if(text != "Select")
+                    searchForm.searchField.text = text
+                else
+                    searchForm.searchField.text = ""
                 searchForm.searchModel.clear()
-                searchForm.searchField.focus = true
                 searchSheet.open()
             }
         }
+
         Row {
             Button {
                 width: col.width / 2
@@ -80,68 +95,30 @@ Page {
             }
         }
         Button {
+            width: parent.width
             text: "Search"
             onClicked: {
-                search()
+                travelResultsPage.search()
+                pageStack.push(travelResultsPage)
             }
         }
-    }
-    ListModel {
-        id: travelModel
-
-        signal loadCompleted()
-    }
-
-    function search() {
-        travelModel.clear()
-
-        var xhr = new XMLHttpRequest;
-        var url = "http://services.epi.trafikanten.no/Travel/GetTravelsAdvanced/?fromStops=" +  fromStation + "&toStops=" + toStation
-        console.log("Requesting " + url)
-        xhr.open("GET", url);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                var a = JSON.parse(xhr.responseText);
-                for (var b in a) {
-                    var travel = a[b];
-                    console.log(travel.DepartureTime)
-                    console.log(travel.ArrivalTime)
-                    for (var c in travel.TravelStages) {
-                        var stage = travel.TravelStages[c]
-                        console.log(stage.DepartureStop.Name)
-                    }
-
-//                    travelModel.append({
-//                                       departureStop: o.DepartureStop[0],
-//                                       departureTime: o.DepartureTime,
-//                                       arrivalStop: o.ArrivalStop,
-//                                       arrivalTime: o.ArrivalTime,
-//                                       selected: false});
-                }
-                travelModel.loadCompleted()
-            }
-        }
-        xhr.send();
     }
 
     DatePickerDialog {
         id: datePickerDialog
         titleText: "Travel date"
         onAccepted: {
-            var d = new Date(datePickerDialog.year, datePickerDialog.month - 1, datePickerDialog.day, timePickerDialog.hour, timePickerDialog.minute)
-            console.log(d.getMonth())
-            datePickerButton.text = Qt.formatDateTime(d, "ddd dd MMM yyyy");
+            updateDateTime()
         }
     }
     TimePickerDialog {
         id: timePickerDialog
         titleText: "Travel Time"
         onAccepted: {
-            var d = new Date(datePickerDialog.year, datePickerDialog.month - 1, datePickerDialog.day, timePickerDialog.hour, timePickerDialog.minute)
-            console.log(d.getFullYear() + " " + d.getHours())
-            timePickerButton.text = Qt.formatDateTime(d, "hh:mm");
+            updateDateTime()
         }
     }
+
     Sheet {
         id: searchSheet
         rejectButtonText: "Cancel"
@@ -150,15 +127,16 @@ Page {
     }
     SearchForm {
         id: searchForm
+        realTime: false
         anchors.fill: parent
         anchors.margins: defaultMargin
         listDelegate: SearchDelegate {
             onClicked:  {
                 if(isTo) {
-                    toStation = stationId
+                    travelResultsPage.toStation = stationId
                     toButton.text = title
                 } else {
-                    fromStation = stationId
+                    travelResultsPage.fromStation = stationId
                     fromButton.text = title
                 }
                 searchSheet.close()

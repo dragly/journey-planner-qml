@@ -39,7 +39,10 @@ OTHER_FILES += \
     qml/TravelPage.qml \
     qml/PositionPage.qml \
     qml/SearchForm.qml \
-    qml/SearchDelegate.qml
+    qml/SearchDelegate.qml \
+    qml/travels.js \
+    qml/TravelResultsPage.qml \
+    qml/helpers.js
 
 RESOURCES += \
     res.qrc

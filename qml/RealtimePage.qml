@@ -1,7 +1,8 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
-import com.nokia.extras 1.1
+import com.nokia.extras 1.0
 import "constants.js" as UI
+import "helpers.js" as Helper
 
 Page {
     property real defaultMargin: UI.MARGIN_XLARGE
@@ -44,20 +45,28 @@ Page {
                     var o = a[b]
                     var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
                     console.log(substrLength)
-                    var dateTime = new Date(parseInt(o.ExpectedArrivalTime.substr(6,substrLength)))
-                    var currentTime = new Date(parseInt(o.RecordedAtTime.substr(6,substrLength)))
-                    var timeDifference = dateTime.getTime() - currentTime.getTime()
+                    var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)
+                    var currentTime = Helper.parseDate(o.RecordedAtTime)
+                    var timeDifference = arrivalTime.getTime() - currentTime.getTime()
                     var timeDifferenceMinutes = timeDifference / 60000
-                    console.log(dateTime.getDate())
-                    console.log(Qt.formatDateTime(dateTime, "yyyy-MM-dd hh:mm:ss"))
-                    console.log("Logging finished")
                     realtimeModel.append({
                                          title: o.PublishedLineName + " " + o.DestinationName,
+                                         arrivalTime: arrivalTime,
                                          timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
-                                         subtitle: Qt.formatDateTime(dateTime, "yyyy-MM-dd hh:mm:ss"),
+                                         subtitle: Qt.formatDateTime(arrivalTime, "yyyy-MM-dd hh:mm:ss"),
                                          platform: o.DirectionRef,
                                          selected: false
                 });
+                }
+                var swapped = true; // let's perform a bubble sort! :D
+                while(swapped) {
+                    swapped = false;
+                    for(var i = 0; i < realtimeModel.count - 1; i++) {
+                        if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
+                            realtimeModel.move(i,i+1,1);
+                            swapped = true;
+                        }
+                    }
                 }
                 realtimeModel.loadCompleted()
             }

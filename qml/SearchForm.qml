@@ -1,12 +1,13 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
-import com.nokia.extras 1.1
+import com.nokia.extras 1.0
 import "constants.js" as UI
 
 Item {
     property alias listDelegate: listview.delegate
     property alias searchModel: searchModel
     property alias searchField: searchField
+    property bool realTime: true
     ListModel {
         id: searchModel
 
@@ -20,15 +21,25 @@ Item {
         searchModel.clear()
 
         var xhr = new XMLHttpRequest;
-        xhr.open("GET", "http://services.epi.trafikanten.no/RealTime/FindMatches/" +  searchField.text);
+        var url
+        if(realTime) {
+            url = "http://services.epi.trafikanten.no/RealTime/FindMatches/" +  searchField.text
+        } else {
+            url = "http://services.epi.trafikanten.no/Place/FindMatches/" +  searchField.text
+        }
+        console.log("Requesting " + url)
+        xhr.open("GET", url);
+
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 var a = JSON.parse(xhr.responseText);
                 for (var b in a) {
                     var o = a[b];
-                    searchModel.append({title: o.Name, subtitle: o.District, stationId: o.ID, selected: false});
+                    if(o.Type == "0") // we don't want areas yet
+                        searchModel.append({title: o.Name, subtitle: o.District, stationId: o.ID, selected: false});
+                    console.log(o.ID)
                 }
-                console.log(o.ID)
+
                 searchModel.loadCompleted()
             }
         }

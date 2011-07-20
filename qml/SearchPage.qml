@@ -1,6 +1,6 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
-import com.nokia.extras 1.1
+import com.nokia.extras 1.0
 import "constants.js" as UI
 
 Page {
@@ -12,6 +12,7 @@ Page {
     anchors.margins: defaultMargin
 
     SearchForm {
+        realTime: true
         anchors.fill: parent
         listDelegate: SearchDelegate {
             onClicked:  {

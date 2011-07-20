@@ -1,6 +1,6 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
-import com.nokia.extras 1.1
+import com.nokia.extras 1.0
 import "constants.js" as UI
 
 PageStackWindow {
@@ -63,11 +63,7 @@ PageStackWindow {
         ToolIcon {
             iconId: "toolbar-back-dimmed";
             onClicked: {
-                if(tabGroup.currentTab == tab1 || tabGroup.currentTab == tab2) {
-                    tabGroup.currentTab.pop()
-                } else {
-                    console.log("Not PageStack, so not popping.")
-                }
+                console.log("Stop clicking backwards! You are already on the first page!")
             }
         }
         ButtonRow {
