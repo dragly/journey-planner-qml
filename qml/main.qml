@@ -44,7 +44,9 @@ PageStackWindow {
     TravelPage{id: routePage}
     PositionPage{id: positionPage}
 
-    Component.onCompleted: {theme.inverted = !theme.inverted}
+    Component.onCompleted: {
+        //theme.inverted = !theme.inverted
+    }
 
     //    ToolBarLayout {
     //        id: commonTools
