@@ -18,50 +18,6 @@ Page {
     signal fromButtonClicked
 
     anchors.fill: parent
-    //        tools: commonTools
-    //    anchors.margins: UiConstants.DefaultMargin
-    //        anchors.margins: defaultMargin
-
-    //        function updateDateTime() {
-    //            var d = new Date(datePickerDialog.year, datePickerDialog.month - 1, datePickerDialog.day, timePickerDialog.hour, timePickerDialog.minute)
-    //            console.log(d.getFullYear() + " " + d.getHours())
-    //            datePickerButton.text = Qt.formatDateTime(d, "ddd dd MMM yyyy");
-    //            timePickerButton.text = Qt.formatDateTime(d, "hh:mm");
-    //            travelResultsPage.time = Qt.formatDateTime(d, "ddMMyyyyhhmm");
-    //        }
-    //        Component.onCompleted: {
-    //            var d = new Date();
-    //            datePickerDialog.year = d.getFullYear();
-    //            datePickerDialog.month = d.getMonth() + 1;
-    //            datePickerDialog.day = d.getDate();
-    //            datePickerButton.text = Qt.formatDate(d, "ddd dd MMM yyyy");
-    //            timePickerDialog.hour = d.getHours();
-    //            timePickerDialog.minute = d.getMinutes();
-    //            timePickerButton.text = Qt.formatTime(d, "hh:mm");
-    //            updateDateTime()
-    //        }
-
-
-    //        TravelResultsPage{
-    //            id: travelResultsPage
-    //            toStation: "3010420"
-    //            fromStation: "3012040"
-    //        }
-
-    //        TitleLabel {
-    //            id: titleRect
-    //            text: qsTr("Travel Search")
-    //        }
-
-    //    SearchPage {
-    //        id: toSearchPage
-    //        visible: false
-    //        onSearchItemClicked: {
-    //            toButton.text = stationName
-    //            toStationID = stationId
-    //            mainPageStack.pop()
-    //        }
-    //    }
 
     SearchSheet {
         id: fromSearchSheet
@@ -110,6 +66,10 @@ Page {
         Component.onCompleted: {
             refreshTravelTime()
         }
+    }
+
+    function search() {
+        Travels.findTravels(fromStationID, toStationID, travelTime, travelModel)
     }
 
     function refreshTravelTime() {
@@ -161,8 +121,9 @@ Page {
             }
 
             Row {
+                spacing: units.gu(1)
                 Button {
-                    width: layoutColumn.width / 2
+                    width: layoutColumn.width / 2 - parent.spacing / 2
                     id: datePickerButton
                     text: "Pick date"
                     onClicked: {
@@ -170,7 +131,7 @@ Page {
                     }
                 }
                 Button {
-                    width: layoutColumn.width / 2
+                    width: layoutColumn.width / 2 - parent.spacing / 2
                     id: timePickerButton
                     text: "Pick time"
                     onClicked: {
@@ -178,13 +139,6 @@ Page {
                     }
                 }
             }
-//            Button {
-//                width: parent.width
-//                text: "Search"
-//                onClicked: {
-//                    search()
-//                }
-//            }
 
             ListView {
                 id: travelSearchResultsListView
@@ -210,21 +164,6 @@ Page {
         onLoadCompleted: {
             console.log("Model load completed " + count)
         }
-    }
-
-    function search() {
-        travelModel.clear()
-
-        var xhr = new XMLHttpRequest;
-        var url = "http://api.trafikanten.no/reisrest/Travel/GetTravelsByPlaces/?time=" + travelTime + "&toplace=" + toStationID + "&fromplace=" + fromStationID  + "&changeMargin=2&changePunish=10&walkingFactor=100&walkingDistance=2000&isAfter=True&proposals=12&transporttypes=Bus,AirportTrain,Boat,Train,Tram,Metro"
-        console.log("Requesting " + url)
-        xhr.open("GET", url);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                Travels.setTravels(xhr.responseText, travelModel)
-            }
-        }
-        xhr.send();
     }
 
     //        DatePickerDialog {

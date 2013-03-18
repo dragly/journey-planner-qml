@@ -38,9 +38,9 @@
 **
 ****************************************************************************/
 import QtQuick 2.0
-import Ubuntu.Components 0.1
-import Ubuntu.Components.ListItems 0.1 as ListItem
-import Ubuntu.Components.Popups 0.1
+//import Ubuntu.Components 0.1
+//import Ubuntu.Components.ListItems 0.1 as ListItem
+//import Ubuntu.Components.Popups 0.1
 import org.dragly 1.0
 import "TumblerIndexHelper.js" as TH
 
@@ -54,16 +54,16 @@ Sheet {
 
     signal dateChanged()
 
+    DateTime {
+        id: dateTime
+    }
+
     /*
      * Property: titleText
      * [string] If not null, it will be used as the title text for the dialog.
      *          If further customization is needed, use property title instead
      */
 //    property alias titleText: title.text
-
-    DateTime {
-        id: dateTime
-    }
 
     /*
      * Property: year
@@ -89,7 +89,7 @@ Sheet {
      *       only be set once during construction. If the value is not specified,
      *       it is default to current year - 1.
      */
-    property int minimumYear: dateTime.currentYear() - 1
+    property int minimumYear: (new Date()).fullYear() - 1
 
     /*
      * Property: maximumYear
@@ -97,7 +97,7 @@ Sheet {
      *       only be set once during construction. If the value is not specified,
      *       it is default to current year + 20.
      */
-    property int maximumYear: dateTime.currentYear() + 20
+    property int maximumYear: (new Date()).fullYear() + 20
 
     Component.onCompleted: {
         day = (new Date()).getDate()

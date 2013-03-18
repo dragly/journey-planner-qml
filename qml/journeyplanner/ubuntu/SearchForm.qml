@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../travels.js" as Travels
 
 Item {
     id: searchForm
@@ -43,8 +44,11 @@ Item {
                         text = "";
                     }
                 }
-                Keys.onReturnPressed: {
-                    searchForm.search(true);
+//                Keys.onReturnPressed: {
+//                    searchForm.search(true);
+//                }
+                Keys.onPressed: {
+                    Travels.findStations(true, searchModel);
                 }
             }
             ListView {
@@ -71,35 +75,5 @@ Item {
                 delegate: listDelegate
             }
         }
-    }
-
-    function search(realtime) {
-        console.log("Wee!")
-
-        var xhr = new XMLHttpRequest;
-        var url
-        if(realtime) {
-            url = "http://services.epi.trafikanten.no/RealTime/FindMatches/" +  searchField.text
-        } else {
-            //                    url = "http://services.epi.trafikanten.no/Place/FindMatches/" +  searchField.text
-        }
-        console.log("Requesting " + url)
-        xhr.open("GET", url);
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                var a = JSON.parse(xhr.responseText);
-                searchModel.clear()
-                for (var b in a) {
-                    var o = a[b];
-                    if(o.Type == "0") // we don't want areas yet
-                        searchModel.append({title: o.Name, subtitle: o.District, stationId: o.ID, selected: false});
-                    console.log(o.ID)
-                }
-
-                searchModel.loadCompleted()
-            }
-        }
-        xhr.send();
     }
 }
