@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.meego 1.0
-import com.nokia.extras 1.0
+import com.nokia.extras 1.1
 import "constants.js" as UI
 
 Page {
@@ -35,9 +35,18 @@ Page {
 
     TravelResultsPage{
         id: travelResultsPage
+        toStation: "3010420"
+        fromStation: "3012040"
     }
+
+    TitleLabel {
+        id: titleRect
+        text: qsTr("Travel Search")
+    }
+
     Column {
         id: col
+        anchors.top: titleRect.bottom
         width: parent.width
         spacing: defaultMargin
         Label {

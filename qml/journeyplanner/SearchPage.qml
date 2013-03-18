@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.meego 1.0
-import com.nokia.extras 1.0
+//import com.nokia.extras 1.0
 import "constants.js" as UI
 
 Page {
@@ -11,9 +11,20 @@ Page {
     //    anchors.margins: UiConstants.DefaultMargin
     anchors.margins: defaultMargin
 
+
+    TitleLabel {
+        id: searchHeader
+        text: qsTr("Search")
+    }
+
     SearchForm {
         realTime: true
-        anchors.fill: parent
+        anchors {
+            top: searchHeader.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
         listDelegate: SearchDelegate {
             onClicked:  {
                 pageStack.push(realtimePage)

@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.meego 1.0
-import com.nokia.extras 1.0
+//import com.nokia.extras 1.0
 import "constants.js" as UI
 
 Item {
@@ -18,7 +18,6 @@ Item {
         id: realtimePage
     }
     function search() {
-        searchModel.clear()
 
         var xhr = new XMLHttpRequest;
         var url
@@ -31,18 +30,19 @@ Item {
         xhr.open("GET", url);
 
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                var a = JSON.parse(xhr.responseText);
-                for (var b in a) {
-                    var o = a[b];
-                    if(o.Type == "0") // we don't want areas yet
-                        searchModel.append({title: o.Name, subtitle: o.District, stationId: o.ID, selected: false});
-                    console.log(o.ID)
-                }
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        var a = JSON.parse(xhr.responseText);
+                        searchModel.clear()
+                        for (var b in a) {
+                            var o = a[b];
+                            if(o.Type == "0") // we don't want areas yet
+                                searchModel.append({title: o.Name, subtitle: o.District, stationId: o.ID, selected: false});
+                            console.log(o.ID)
+                        }
 
-                searchModel.loadCompleted()
-            }
-        }
+                        searchModel.loadCompleted()
+                    }
+                }
         xhr.send();
     }
 
@@ -55,13 +55,13 @@ Item {
             height: 50
 
             Keys.onReturnPressed: {
-                console.log("Return key pressed")
-                search()
                 parent.focus = true;
             }
-            platformSipAttributes: SipAttributes {
-                actionKeyLabel: "Search"
+            onTextChanged: {
+                search()
             }
+
+            inputMethodHints: Qt.ImhNoPredictiveText
             Image {
                 id: clearButton
                 anchors.right: parent.right

@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import com.nokia.meego 1.0
-import com.nokia.extras 1.0
+//import com.nokia.extras 1.0
 import "constants.js" as UI
 import "travels.js" as Travels
 
@@ -11,10 +11,12 @@ Page {
     property string fromStation: "3010453"
     property string time: "201107231500"
 
+    anchors.margins: defaultMargin
+
     tools: ToolBarLayout {
         ToolIcon {
             iconId: "toolbar-back";
-            onClicked: {pageStack.pop()}
+            onClicked: pageStack.pop()
         }
         ToolIcon {
             iconId: "toolbar-favorite-unmark";
@@ -31,18 +33,28 @@ Page {
 
         signal loadCompleted()
     }
+
+
+    TitleLabel {
+        id: titleRect
+        text: qsTr("Travel Search Results")
+    }
+
     ListView {
         id: listview
 
-        anchors.fill: parent
-        anchors.margins: defaultMargin
+        anchors {
+            top: titleRect.bottom
+            bottom: parent.bottom
+            right: parent.right
+            left: parent.left
+        }
 
+        clip: true
         model: travelModel
-        delegate:
-            ListDelegate {
+        delegate: TravelDelegate {
         }
     }
-
 
     function search() {
         travelModel.clear()
@@ -52,11 +64,10 @@ Page {
         console.log("Requesting " + url)
         xhr.open("GET", url);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                var a = JSON.parse(xhr.responseText);
-                Travels.setTravels(a)
-            }
-        }
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        Travels.setTravels(xhr.responseText)
+                    }
+                }
         xhr.send();
     }
 }

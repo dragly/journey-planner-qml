@@ -1,15 +1,27 @@
-#include <QtGui/QApplication>
-#include <QtDeclarative>
+//#include <QtGui/QApplication>
+//#include <QtDeclarative>
+#include "settings.h"
+#include "mdatetimehelper.h"
+#include <QtQml/qqml.h>
+#include <QtGui/QGuiApplication>
+#include <QScopedPointer>
+#include "qtquick2applicationviewer.h"
 
-int main(int argc, char *argv[])
+Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QDeclarativeView view;
-    view.setSource(QUrl("qrc:/qml/main.qml"));
-#ifdef Q_OS_LINUX
-    view.show();
+    qmlRegisterType<Settings>("org.dragly", 1, 0, "Settings");
+    qmlRegisterType<MDateTimeHelper>("org.dragly", 1, 0, "DateTime");
+
+    QGuiApplication app(argc, argv);
+
+    QtQuick2ApplicationViewer viewer;
+//    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+#ifdef OS_UBUNTU
+    viewer.setMainQmlFile(QLatin1String("qml/journeyplanner/ubuntu/main.qml"));
 #else
-    view.showFullScreen();
+    viewer.setMainQmlFile(QLatin1String("qml/journeyplanner/main.qml"));
 #endif
+    viewer.showExpanded();
+
     return app.exec();
 }
